@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @EqualsAndHashCode
+@ToString
 public class Team {
     private String name;
 

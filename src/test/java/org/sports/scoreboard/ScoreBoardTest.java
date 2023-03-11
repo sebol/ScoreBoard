@@ -21,6 +21,79 @@ class ScoreBoardTest {
     }
 
     @Test
+    void shouldBeInitialisedCorrectly() {
+        assertEquals(0, scoreBoard.getSummary().size());
+    }
+
+    @Test
+    void shouldCreateMatchCorrectly() {
+        // given
+        String homeTeamName = "Spain";
+        String awayTeamName = "Brazil";
+
+        // when
+        Match match = scoreBoard.startGame(homeTeamName, awayTeamName);
+
+        // then
+        assertEquals(homeTeamName, match.getHomeTeam().getName());
+        assertEquals(awayTeamName, match.getAwayTeam().getName());
+        assertEquals(0, match.getHomeTeam().getScore());
+        assertEquals(0, match.getAwayTeam().getScore());
+    }
+
+    @Test
+    void shouldCreateAndStoreMatchCorrectly() {
+        // given
+        String homeTeamName = "Poland";
+        String awayTeamName = "Brazil";
+
+        // when
+        scoreBoard.startGame(homeTeamName, awayTeamName);
+
+        List<Match> summary = scoreBoard.getSummary();
+
+        // then
+        assertEquals(1, summary.size());
+        assertEquals(homeTeamName, summary.get(0).getHomeTeam().getName());
+        assertEquals(awayTeamName, summary.get(0).getAwayTeam().getName());
+        assertEquals(0, summary.get(0).getHomeTeam().getScore());
+        assertEquals(0, summary.get(0).getAwayTeam().getScore());
+    }
+
+    @Test
+    void shouldUpdateMatchCorrectly() {
+        String homeTeamName = "Spain";
+        String awayTeamName = "Brazil";
+        int homeScore = 10;
+        int awayScore = 2;
+
+        // when
+        Match match = scoreBoard.startGame(homeTeamName, awayTeamName);
+        scoreBoard.updateScore(match.getId(), homeScore, awayScore);
+
+        // then
+        assertEquals(homeTeamName, match.getHomeTeam().getName());
+        assertEquals(awayTeamName, match.getAwayTeam().getName());
+        assertEquals(homeScore, match.getHomeTeam().getScore());
+        assertEquals(awayScore, match.getAwayTeam().getScore());
+    }
+
+    @Test
+    void shouldFinishGameCorrectly()
+    {
+        // given
+        Match matchToFinish = scoreBoard.startGame("Mexico", "Canada");
+        scoreBoard.startGame("Spain", "Brazil");
+
+        // when
+        scoreBoard.finishGame(matchToFinish.getId());
+        List<Match> summary = scoreBoard.getSummary();
+
+        // then
+        assertEquals(1, summary.size());
+    }
+
+    @Test
     void shouldCorrectlyHandleHappyPath() {
         // Initialise the board
         Match match0 = scoreBoard.startGame("Mexico", "Canada");
@@ -33,11 +106,11 @@ class ScoreBoardTest {
         assertEquals(5, summary.size());
 
         // Update scores
-        scoreBoard.updateScore(match0, 0, 5);
-        scoreBoard.updateScore(match1, 10, 2);
-        scoreBoard.updateScore(match2, 2, 2);
-        scoreBoard.updateScore(match3, 6, 6);
-        scoreBoard.updateScore(match4, 3, 1);
+        scoreBoard.updateScore(match0.getId(), 0, 5);
+        scoreBoard.updateScore(match1.getId(), 10, 2);
+        scoreBoard.updateScore(match2.getId(), 2, 2);
+        scoreBoard.updateScore(match3.getId(), 6, 6);
+        scoreBoard.updateScore(match4.getId(), 3, 1);
 
 
         summary = scoreBoard.getSummary();
@@ -49,7 +122,7 @@ class ScoreBoardTest {
 
 
         // Finish the game
-        scoreBoard.finishGame(match4);
+        scoreBoard.finishGame(match4.getId());
         summary = scoreBoard.getSummary();
         assertEquals(4, summary.size());
         assertEquals(match3, summary.get(0));
@@ -61,17 +134,24 @@ class ScoreBoardTest {
     @Test
     void shouldFindMatchByTeamName() {
         // given
-        String expectedTeamName = "Poland";
+        String expectedHomeTeamName = "Poland";
+        String expectedAwayTeamName = "Germany";
         scoreBoard.startGame("Mexico", "Canada");
-        scoreBoard.startGame(expectedTeamName, "Brazil");
+        scoreBoard.startGame(expectedHomeTeamName, "Brazil");
+        scoreBoard.startGame("Spain", expectedAwayTeamName);
+
 
         // when
-        Optional<Match> existingMatch = scoreBoard.findMatchByTeamName(expectedTeamName);
+        Optional<Match> existingHomeMatch = scoreBoard.findMatchByTeamName(expectedHomeTeamName);
+        Optional<Match> existingAwayMatch = scoreBoard.findMatchByTeamName(expectedAwayTeamName);
         Optional<Match> notExistingMatch = scoreBoard.findMatchByTeamName("Hello");
 
         // then
-        assertTrue(existingMatch.isPresent());
-        assertTrue(expectedTeamName.equals(existingMatch.get().getAwayTeam()) || expectedTeamName.equals(existingMatch.get().getAwayTeam().getName()));
+        assertTrue(existingHomeMatch.isPresent());
+        assertTrue(expectedHomeTeamName.equals(existingHomeMatch.get().getHomeTeam().getName()));
+
+        assertTrue(existingAwayMatch.isPresent());
+        assertTrue(expectedAwayTeamName.equals(existingAwayMatch.get().getAwayTeam().getName()));
 
         assertFalse(notExistingMatch.isPresent());
     }
