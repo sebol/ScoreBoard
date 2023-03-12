@@ -1,11 +1,12 @@
 package org.sports.scoreboard;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @ToString
 @EqualsAndHashCode

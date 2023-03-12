@@ -16,10 +16,11 @@ class ScoreBoardSorterTest {
         // given
         List<Match> list = createList();
 
+        // when
         list.get(1).getAwayTeam().setScore(3);
-
         List<Match> sorted = sorter.sort(list);
 
+        // then
         assertTrue(sorted.get(0).getId() == 2);
         assertTrue(sorted.get(1).getId() == 3);
         assertTrue(sorted.get(2).getId() == 1);

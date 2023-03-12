@@ -15,7 +15,7 @@ public class Team {
     @Setter(AccessLevel.PACKAGE)
     private int score;
 
-    public Team(String name) {
+    Team(String name) {
         this.name = name;
     }
 }

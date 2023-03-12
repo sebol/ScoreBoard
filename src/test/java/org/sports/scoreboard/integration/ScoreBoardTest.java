@@ -1,7 +1,9 @@
-package org.sports.scoreboard;
+package org.sports.scoreboard.integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.sports.scoreboard.Match;
+import org.sports.scoreboard.ScoreBoard;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ScoreBoardTest {
 
     ScoreBoard scoreBoard;
-
 
     @BeforeEach
     void setup() {
@@ -49,7 +50,6 @@ class ScoreBoardTest {
 
         // when
         scoreBoard.startGame(homeTeamName, awayTeamName);
-
         List<Match> summary = scoreBoard.getSummary();
 
         // then
@@ -62,6 +62,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldUpdateMatchCorrectly() {
+        // given
         String homeTeamName = "Spain";
         String awayTeamName = "Brazil";
         int homeScore = 10;
@@ -79,8 +80,7 @@ class ScoreBoardTest {
     }
 
     @Test
-    void shouldFinishGameCorrectly()
-    {
+    void shouldFinishGameCorrectly() {
         // given
         Match matchToFinish = scoreBoard.startGame("Mexico", "Canada");
         scoreBoard.startGame("Spain", "Brazil");
@@ -91,6 +91,7 @@ class ScoreBoardTest {
 
         // then
         assertEquals(1, summary.size());
+        assertFalse(matchToFinish.getHomeTeam().getName().equals(summary.get(0).getHomeTeam().getName()));
     }
 
     @Test
@@ -120,6 +121,7 @@ class ScoreBoardTest {
         assertEquals(match4, summary.get(3));
         assertEquals(match2, summary.get(4));
 
+        scoreBoard.getSummary().forEach(m -> System.out.println(m));
 
         // Finish the game
         scoreBoard.finishGame(match4.getId());
